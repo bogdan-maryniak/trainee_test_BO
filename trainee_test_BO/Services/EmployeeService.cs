@@ -1,7 +1,9 @@
 ﻿using Domain.Abstractions.Repositories;
 using Domain.Abstractions.Services;
 using Domain.Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Services
@@ -25,12 +27,18 @@ namespace Services
 
         public async Task<ICollection<Employee>> GetAll()
         {
-            return await employees.GetAll();
+            var all = await employees.GetAll();
+            return all.Where(e => !e.IsDeleted).ToList();
         }
 
         public async Task<Employee> GetById(int id)
         {
-            return await employees.GetById(id);
+            var employee= await employees.GetById(id);
+
+            if(employee.IsDeleted)
+                throw new ArgumentException( "Employee was deleted", nameof(id));
+
+            return employee;
         }
 
         public async Task<Employee> Update(Employee employee)

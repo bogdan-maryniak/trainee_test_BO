@@ -7,7 +7,7 @@ namespace Repositories.Configuration
     {
         public DbSet<Employee> Employees { get; set; }
         public DBContext(DbContextOptions<DBContext> options) : base(options)
-        {
+        {         
         }
     }
 }

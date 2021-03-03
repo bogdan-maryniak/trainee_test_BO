@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Domain.Abstractions.Repositories;
 
 namespace Repositories
 {
@@ -8,7 +6,7 @@ namespace Repositories
     {
         public static void Initialize()
         {
-
+            IoC.IoC.AddScopped<IEmployeeRepository, EmployeeRepository>();
         }
     }
 }

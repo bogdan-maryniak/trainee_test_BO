@@ -31,7 +31,7 @@ namespace trainee_test_BO
 
             var connectionString = Configuration.GetSection("ConnectionStrings:DefaultConnection").Value;
 
-            services.AddDbContext<DBContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Singleton);
+            services.AddDbContext<DBContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 
             foreach (var dep in IoC.IoC.GetSingletons())
                 services.AddSingleton(dep.Key, dep.Value);
@@ -70,7 +70,7 @@ namespace trainee_test_BO
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Employee}/{action=Index}/{id?}");
             });
         }
     }
