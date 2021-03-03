@@ -13,7 +13,7 @@ namespace trainee_test_BO.API.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeService service ;
+        private readonly IEmployeeService service;
         public EmployeeController(IEmployeeService service)
         {
             this.service = service;
@@ -22,7 +22,7 @@ namespace trainee_test_BO.API.Controllers
         public async Task<ActionResult> Index()
         {
             var employees = await service.GetAll();
-            return View(employees);           
+            return View(employees);
         }
 
         // GET: EmployeeController/Details/5
@@ -74,7 +74,7 @@ namespace trainee_test_BO.API.Controllers
                 return RedirectToAction(nameof(Index));
             });
         }
-     
+
 
         // GET: EmployeeController/Delete/5
         [HttpGet]
