@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Repositories.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,24 @@ namespace trainee_test_BO
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region DI configuration
+            Services.Module.Initialize();
+            Repositories.Module.Initialize();
+
+            var connectionString = Configuration.GetSection("ConnectionStrings:DefaultConnection").Value;
+
+            services.AddDbContext<DBContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Singleton);
+
+            foreach (var dep in IoC.IoC.GetSingletons())
+                services.AddSingleton(dep.Key, dep.Value);
+
+            foreach (var dep in IoC.IoC.GetScopes())
+                services.AddScoped(dep.Key, dep.Value);
+
+            foreach (var dep in IoC.IoC.GetTransinets())
+                services.AddTransient(dep.Key, dep.Value);
+            #endregion
+
             services.AddControllersWithViews();
         }
 

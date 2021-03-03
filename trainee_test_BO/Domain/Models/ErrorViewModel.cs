@@ -1,6 +1,6 @@
 using System;
 
-namespace trainee_test_BO.Models
+namespace Domain.Models
 {
     public class ErrorViewModel
     {
