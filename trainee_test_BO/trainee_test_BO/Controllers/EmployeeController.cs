@@ -1,9 +1,11 @@
 ﻿using Domain.Abstractions.Repositories;
+using Domain.Abstractions.Services;
 using Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,50 +13,49 @@ namespace trainee_test_BO.API.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository repository;
-        public EmployeeController(IEmployeeRepository repository)
+        private readonly IEmployeeService service ;
+        public EmployeeController(IEmployeeService service)
         {
-            this.repository = repository;
+            this.service = service;
         }
         // GET: EmployeeController
         public async Task<ActionResult> Index()
         {
-            var employees = await repository.GetAll();
+            var employees = await service.GetAll();
             return View(employees);           
         }
 
         // GET: EmployeeController/Details/5
         public async Task<ActionResult> DetailsAsync(int id)
         {
-            var employee = await repository.GetById(id);
+            var employee = await service.GetById(id);
             return View(employee);
         }
 
-        // GET: EmployeeController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
 
-        // POST: EmployeeController/Create
+        // POST: EmployeeController/Upload
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Upload(IFormFile file)
         {
-            try
+            if (file == null || file.Length == 0)
+                return Content("file not selected");
+            if (file.FileName.EndsWith(".csv"))
             {
+                var employees = CSVAdapter.GetFromCSV(file);
+                await service.AddRange(employees);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            else
             {
-                return View();
+                return BadRequest();
             }
         }
 
         // GET: EmployeeController/Edit/5
         public async Task<ActionResult> EditAsync(int id)
         {
-            var employee = await repository.GetById(id);
+            var employee = await service.GetById(id);
             return View(employee);
         }
 
@@ -68,21 +69,20 @@ namespace trainee_test_BO.API.Controllers
                 if (!ModelState.IsValid)
                     return View(employee);
 
-                await repository.Update(employee);
+                await service.Update(employee);
 
                 return RedirectToAction(nameof(Index));
             });
         }
      
 
-        // POST: EmployeeController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteAsync(int id)
+        // GET: EmployeeController/Delete/5
+        [HttpGet]
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                await repository.Delete(id);
+                await service.Delete(id);
                 return RedirectToAction(nameof(Index));
             }
             catch

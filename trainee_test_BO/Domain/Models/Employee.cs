@@ -16,6 +16,8 @@ namespace Domain.Models
 
         [RegularExpression(@"^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$", ErrorMessage = "Invalid phone number")]
         public string Phone { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:N}", ApplyFormatInEditMode = true)]
         public decimal Salary { get; set; }
         public bool IsDeleted { get; set; }
     }

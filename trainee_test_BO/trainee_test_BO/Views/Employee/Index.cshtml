@@ -8,7 +8,13 @@
 <h1>Index</h1>
 
 <div>
-    <h4>Employees</h4>
+    <h4>Upload CSV</h4>
+    <form asp-controller="Employee" asp-action="Upload" method="post"
+          enctype="multipart/form-data">
+
+        <input type="file" name="file" accept=".csv" required  class="btn-outline-success"/>       
+        <button type="submit" class="btn-info">Upload File</button>
+    </form>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -31,7 +37,7 @@
     {
         <dl class="row">
             <dd class="col-sm-2">
-                @Html.ActionLink(employee.Name, "Details", "Employee", new {id=employee.Id})
+                @Html.ActionLink(employee.Name, "Details", "Employee", new { id = employee.Id })
             </dd>
             <dd class="col-sm-2">
                 @Html.DisplayFor(model => employee.Birthday)
@@ -44,11 +50,12 @@
             </dd>
             <dd class="col-sm-2">
                 @Html.DisplayFor(model => employee.Salary)
-            </dd>   
+            </dd>
             <dd>
                 @Html.ActionLink("Edit", "Edit", new { id = employee.Id })
+                @Html.ActionLink("Delete", "Delete", new { id = employee.Id })
             </dd>
         </dl>
-    } 
+    }
 </div>
 

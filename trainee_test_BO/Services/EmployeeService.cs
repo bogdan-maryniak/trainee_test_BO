@@ -19,6 +19,15 @@ namespace Services
         {
             return await employees.Add(employee);
         }
+        public async Task<ICollection<Employee>> AddRange(ICollection<Employee> list)
+        {
+            var result = new List<Employee>();
+
+            foreach (var e in list)
+                result.Add(await employees.Add(e));
+
+            return result;
+        }
 
         public async Task<Employee> Delete(int id)
         {
