@@ -15,9 +15,11 @@ namespace trainee_test_BO
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment Environment;
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Environment = env;
         }
 
         public IConfiguration Configuration { get; }
@@ -25,14 +27,21 @@ namespace trainee_test_BO
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region Create & MigrateDB in prod/state environment
+            var connectionString = Configuration.GetSection("ConnectionStrings:DefaultConnection").Value;
+
+            var dbOptions = new DbContextOptionsBuilder<DBContext>();
+            dbOptions.UseSqlServer(connectionString);
+            using var context = new DBContext(dbOptions.Options);
+            context.Database.Migrate();
+            #endregion
             #region DI configuration
             Services.Module.Initialize();
             Repositories.Module.Initialize();
 
-            var connectionString = Configuration.GetSection("ConnectionStrings:DefaultConnection").Value;
+           
 
-            services.AddDbContext<DBContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
-
+            services.AddDbContext<DBContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);          
             foreach (var dep in IoC.IoC.GetSingletons())
                 services.AddSingleton(dep.Key, dep.Value);
 
@@ -43,6 +52,7 @@ namespace trainee_test_BO
                 services.AddTransient(dep.Key, dep.Value);
             #endregion
 
+           
             services.AddControllersWithViews();
         }
 
